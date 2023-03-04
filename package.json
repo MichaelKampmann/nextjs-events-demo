@@ -1,5 +1,5 @@
 {
-  "name": "bonzini",
+  "name": "next-js-course",
   "private": true,
   "scripts": {
     "dev": "next dev",
