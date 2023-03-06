@@ -29,4 +29,16 @@ export async function getStaticProps(context) {
   };
 }
 
+export async function getStaticPaths() {
+  return {
+    paths: [
+      { params: { pid: 'p1' } },
+      { params: { pid: 'p2' } },
+      { params: { pid: 'p3' } },
+      { params: { pid: 'p4' } },
+    ],
+    fallback: false,
+  };
+}
+
 export default ProductDetailPage;
