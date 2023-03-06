@@ -21,6 +21,7 @@ export async function getStaticProps() {
     props: {
       products: data.products,
     },
+    revalidate: 60, // "Caching static data, new data will be fetched every 60 second."
   };
 }
 
