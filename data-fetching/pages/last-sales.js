@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 
 function LastSalesPage(props) {
-  const [sales, setSales] = useState();
+  const [sales, setSales] = useState(props.sales);
   //   const [isLoading, setIsLoading] = useState(false);
 
   const { data, error } = useSWR(
@@ -26,32 +26,32 @@ function LastSalesPage(props) {
   }, [data]);
   //   useEffect(() => {
   //     setIsLoading(true);
-  //     fetch(
-  //       'https://nextjs-course-maxi-13bd5-default-rtdb.firebaseio.com/sales.json'
-  //     )
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //   const transformedSales = [];
+  //   fetch(
+  //     'https://nextjs-course-maxi-13bd5-default-rtdb.firebaseio.com/sales.json'
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  // const transformedSales = [];
 
-  //   for (const key in data) {
-  //     transformedSales.push({
-  //       id: key,
-  //       username: data[key].username,
-  //       volume: data[key].volume,
+  // for (const key in data) {
+  //   transformedSales.push({
+  //     id: key,
+  //     username: data[key].username,
+  //     volume: data[key].volume,
+  //   });
+  // }
+  //       setSales(transformedSales);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
   //     });
-  //   }
-  //         setSales(transformedSales);
-  //       })
-  //       .finally(() => {
-  //         setIsLoading(false);
-  //       });
   //   }, []);
 
   if (error) {
     return <p>failed to load</p>;
   }
 
-  if (!data || !sales) {
+  if (!data && !sales) {
     return <p>Loading...</p>;
   }
 
@@ -64,6 +64,31 @@ function LastSalesPage(props) {
       ))}
     </ul>
   );
+}
+
+export async function getStaticProps() {
+  const response = await fetch(
+    'https://nextjs-course-maxi-13bd5-default-rtdb.firebaseio.com/sales.json'
+  );
+
+  const data = await response.json();
+
+  const transformedSales = [];
+
+  for (const key in data) {
+    transformedSales.push({
+      id: key,
+      username: data[key].username,
+      volume: data[key].volume,
+    });
+  }
+
+  return {
+    props: {
+      sales: transformedSales,
+    },
+    revalidate: 10,
+  };
 }
 
 export default LastSalesPage;
