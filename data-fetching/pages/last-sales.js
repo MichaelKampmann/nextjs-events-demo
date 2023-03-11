@@ -1,43 +1,63 @@
 import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 function LastSalesPage(props) {
-  const [salesState, setSales] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [sales, setSales] = useState();
+  //   const [isLoading, setIsLoading] = useState(false);
+
+  const { data, error } = useSWR(
+    'https://nextjs-course-maxi-13bd5-default-rtdb.firebaseio.com/sales.json',
+    (url) => fetch(url).then((res) => res.json())
+  );
 
   useEffect(() => {
-    setIsLoading(true);
-    fetch(
-      'https://nextjs-course-maxi-13bd5-default-rtdb.firebaseio.com/sales.json'
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        const transformedSales = [];
+    if (data) {
+      const transformedSales = [];
 
-        for (const key in data) {
-          transformedSales.push({
-            id: key,
-            username: data[key].username,
-            volume: data[key].volume,
-          });
-        }
-        setSales(transformedSales);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+      for (const key in data) {
+        transformedSales.push({
+          id: key,
+          username: data[key].username,
+          volume: data[key].volume,
+        });
+      }
+      setSales(transformedSales);
+    }
+  }, [data]);
+  //   useEffect(() => {
+  //     setIsLoading(true);
+  //     fetch(
+  //       'https://nextjs-course-maxi-13bd5-default-rtdb.firebaseio.com/sales.json'
+  //     )
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //   const transformedSales = [];
 
-  if (isLoading) {
-    return <p>Loading...</p>;
+  //   for (const key in data) {
+  //     transformedSales.push({
+  //       id: key,
+  //       username: data[key].username,
+  //       volume: data[key].volume,
+  //     });
+  //   }
+  //         setSales(transformedSales);
+  //       })
+  //       .finally(() => {
+  //         setIsLoading(false);
+  //       });
+  //   }, []);
+
+  if (error) {
+    return <p>failed to load</p>;
   }
 
-  if (!salesState) {
-    return <p>No data</p>;
+  if (!data || !sales) {
+    return <p>Loading...</p>;
   }
 
   return (
     <ul>
-      {salesState.map((sale) => (
+      {sales.map((sale) => (
         <li key={sale.id}>
           {sale.username} - ${sale.volume}
         </li>
