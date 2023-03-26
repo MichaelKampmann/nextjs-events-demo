@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useState } from 'react';
 import useSWR from 'swr';
+import Head from 'next/head';
 import EventList from '../../components/events/EventList';
 import ResultsTitle from '../../components/events/ResultsTitle';
 import Button from '../../components/UI/Button';
@@ -88,6 +89,13 @@ function FilteredEventsPage(props) {
 
   return (
     <Fragment>
+      <Head>
+        <title>Filtered events</title>
+        <meta
+          name="description"
+          content={`All events for: ${numMonth}/${numYear}`}
+        />
+      </Head>
       <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
     </Fragment>
