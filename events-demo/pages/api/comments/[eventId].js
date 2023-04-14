@@ -1,5 +1,12 @@
-function handler(req, res) {
+import { MongoClient } from 'mongodb';
+
+async function handler(req, res) {
   const eventId = req.query.eventId;
+
+  const client = await MongoClient.connect(
+    'mongodb+srv://nextjsevents:nextjseventspassword@cluster0.ri8crmw.mongodb.net/events?retryWrites=true&w=majority'
+  );
+  const db = client.db();
 
   if (req.method === 'POST') {
     const { email, name, text } = req.body;
@@ -16,12 +23,17 @@ function handler(req, res) {
     }
 
     const newComment = {
-      id: new Date().toISOString(),
+      eventId,
       email,
       name,
       text,
     };
-    console.log(newComment);
+
+    const result = await db.collection('comments').insertOne(newComment);
+    console.log(result);
+
+    newComment.id = result.insertedId;
+
     res.status(201).json({ message: 'created', comment: newComment });
   }
 
@@ -33,6 +45,8 @@ function handler(req, res) {
 
     res.status(200).json({ comments: dummyList });
   }
+
+  client.close();
 }
 
 export default handler;
