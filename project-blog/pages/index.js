@@ -13,5 +13,4 @@ function HomePage() {
 
 export default HomePage;
 
-// 1) Hero => Present ourselves
-// 2) Featured posts
+// 1) Featured posts
